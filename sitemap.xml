@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>https://jhalakrai.com/</loc>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>https://jhalakrai.com/hamro-patro.html</loc>
+		<changefreq>monthly</changefreq>
+	</url>
+	<url>
+		<loc>https://jhalakrai.com/home-assistant.html</loc>
+		<changefreq>monthly</changefreq>
+	</url>
+	<url><loc>https://jhalakrai.com/guides.html</loc></url>
+	<url><loc>https://jhalakrai.com/guides/plan-your-homelab.html</loc></url>
+	<url><loc>https://jhalakrai.com/guides/network-segmentation.html</loc></url>
+	<url><loc>https://jhalakrai.com/guides/backup-and-restore.html</loc></url>
+	<url><loc>https://jhalakrai.com/guides/home-assistant-dashboard.html</loc></url>
+	<url><loc>https://jhalakrai.com/guides/home-assistant-troubleshooting.html</loc></url>
+	<url><loc>https://jhalakrai.com/guides/home-assistant-backups.html</loc></url>
+</urlset>
