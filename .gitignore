@@ -1,0 +1,55 @@
+# Home Assistant internal state and authentication
+.storage/
+.cloud/
+.HA_VERSION
+.ha_run.lock
+deps/
+custom_components/
+
+# Share reviewed extracts rather than whole live configuration files
+configuration.yaml
+automations.yaml
+secrets.yaml
+secrets.yml
+**/secrets.yaml
+**/secrets.yml
+known_devices.yaml
+ip_bans.yaml
+!*.yaml.example
+
+# Credentials and local environment
+.env
+.env.*
+!.env.example
+credentials*.json
+**/credentials*.json
+service_account*.json
+**/service_account*.json
+*.pem
+*.key
+*.p12
+*.pfx
+ssl/
+
+# Databases, logs, backups and local media
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.log
+*.log.*
+backups/
+backup/
+*.tar
+*.tar.gz
+*.zip
+media/
+tts/
+
+# Editor and operating system files
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

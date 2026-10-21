@@ -1,0 +1,14 @@
+# Example only. Replace light.example_living_room with your own light entity.
+# The list format is intended for an automations YAML list.
+- id: example_evening_light
+  alias: "Example: turn on a light at sunset"
+  description: "Illustrative starter; review before adding to your setup."
+  trigger:
+    - platform: sun
+      event: sunset
+  condition: []
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.example_living_room
+  mode: single
