@@ -1,0 +1,2430 @@
+background: center / cover no-repeat url("/local/space.png") fixed
+kiosk_mode:
+  admin_settings:
+    hide_header: false
+views:
+  - theme: montserrat
+    path: home
+    icon: mdi:home
+    type: custom:masonry-layout
+    badges: []
+    cards:
+      - type: custom:weather-chart-card
+        entity: weather.forecast_home
+        show_main: true
+        show_temperature: true
+        show_current_condition: true
+        show_attributes: true
+        show_time: true
+        show_time_seconds: false
+        show_day: true
+        show_date: true
+        show_humidity: true
+        show_pressure: true
+        show_wind_direction: true
+        show_wind_speed: true
+        show_sun: true
+        show_feels_like: false
+        show_dew_point: false
+        show_wind_gust_speed: false
+        show_visibility: false
+        show_last_changed: true
+        use_12hour_format: false
+        icons_size: 25
+        animated_icons: true
+        icon_style: style1
+        autoscroll: false
+        forecast:
+          precipitation_type: rainfall
+          show_probability: false
+          labels_font_size: '11'
+          precip_bar_size: '100'
+          style: style1
+          show_wind_forecast: true
+          condition_icons: true
+          round_temp: false
+          type: daily
+          number_of_forecasts: '0'
+          disable_animation: false
+        units:
+          speed: ''
+        title: Example location
+      - type: custom:power-flow-card-plus
+        entities:
+          home:
+            entity: sensor.foxess_load_power
+            color_icon: solar
+            secondary_info: {}
+          grid:
+            icon: mdi:transmission-tower
+            name: Grid
+            entity:
+              production: sensor.foxess_feedin_power
+              consumption: sensor.foxess_grid_consumption_power
+            secondary_info: {}
+          solar:
+            icon: mdi:solar-power-variant
+            entity: sensor.foxess_pv_power
+            secondary_info: {}
+          battery:
+            name: Battery
+            icon: mdi:battery-high
+            entity:
+              consumption: sensor.foxess_bat_discharge_power
+              production: sensor.foxess_bat_charge_power
+            state_of_charge: sensor.foxess_bat_soc
+          individual:
+            - entity: sensor.heating_gas_power
+              name: Heating
+              icon: mdi:radiator
+              color: '#ff9800'
+              color_icon: true
+              display_zero: true
+              display_zero_state: false
+              secondary_info:
+                template: >
+                  £{{ states('sensor.heating_gas_cost_today') | float(0) |
+                  round(2) }}
+                display_zero: true
+            - entity: sensor.dhw_gas_power
+              name: Hot Water
+              icon: mdi:water-pump
+              color: '#38bdf8'
+              color_icon: true
+              display_zero: true
+              display_zero_state: false
+              secondary_info:
+                template: >
+                  £{{ states('sensor.dhw_gas_cost_today') | float(0) | round(2)
+                  }}
+                display_zero: true
+            - entity: sensor.server_rack_current_consumption
+              name: Server Rack
+              icon: mdi:server-network
+              color: '#a78bfa'
+              color_icon: true
+              display_zero: true
+            - entity: sensor.ohme_home_pro_power
+              name: Car
+              icon: mdi:car-electric
+              color: '#ff8080'
+              color_icon: true
+              display_zero: true
+        min_flow_rate: 0.9
+        max_flow_rate: 6
+        clickable_entities: true
+        title: Energy
+        kilo_threshold: 10000
+        base_decimals: 0
+        kilo_decimals: 2
+      - type: custom:alarmo-card
+        entity: alarm_control_panel.alarmo
+        use_clear_icon: false
+        button_scale_actions: 1
+        button_scale_keypad: 1
+        name: Alarm Panel
+      - type: custom:vertical-stack-in-card
+        cards:
+          - type: entities
+            entities:
+              - entity: switch.front_door_light
+          - type: picture
+            image: https://demo.home-assistant.io/stub_config/t-shirt-promo.png
+            image_entity: image.front_door_event_image
+      - type: custom:webrtc-camera
+        entity: camera.front_entrance_fluent
+      - type: custom:restriction-card
+        duration: 10
+        restrictions:
+          confirm:
+            text: Unlock controls
+        card:
+          type: thermostat
+          entity: climate.central_heating
+          name: Central Heating
+          features:
+            - type: climate-hvac-modes
+              hvac_modes:
+                - 'off'
+                - heat
+          show_current_as_primary: false
+      - type: vertical-stack
+        cards:
+          - type: gauge
+            entity: >-
+              sensor.octopus_energy_electricity_example_meter_current_demand
+            min: -8000
+            max: 20000
+            needle: true
+            severity:
+              green: 8
+              yellow: 0
+              red: 0
+            name: 'Live From Grid '
+          - type: gauge
+            entity: >-
+              sensor.octopus_energy_electricity_example_meter_export_previous_accumulative_cost
+            name: Previous Day Export
+            needle: false
+      - type: horizontal-stack
+        title: Bin Collection
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:config-template-card
+                entities:
+                  - sensor.white_bin_collection
+                variables:
+                  DAYS: >-
+                    states['sensor.white_bin_collection'].attributes['Days'] ==
+                    0 ? 'Today' :
+                    states['sensor.white_bin_collection'].attributes['Days'] ==
+                    1
+                      ? 'Tomorrow'
+                      : states['sensor.white_bin_collection'].attributes['Days'] + ' days'
+                card:
+                  type: picture-entity
+                  entity: sensor.white_bin_collection
+                  name: ${DAYS}
+                  show_name: true
+                  show_state: false
+                  image: /local/whitetop.png
+              - type: custom:config-template-card
+                entities:
+                  - sensor.blue_bin_collection
+                variables:
+                  DAYS: >-
+                    states['sensor.blue_bin_collection'].attributes['Days'] == 0
+                    ? 'Today' :
+                    states['sensor.blue_bin_collection'].attributes['Days'] == 1
+                      ? 'Tomorrow'
+                      : states['sensor.blue_bin_collection'].attributes['Days'] + ' days'
+                card:
+                  type: picture-entity
+                  entity: sensor.blue_bin_collection
+                  name: ${DAYS}
+                  show_name: true
+                  show_state: false
+                  image: /local/bluetop.png
+          - type: vertical-stack
+            cards:
+              - type: custom:config-template-card
+                entities:
+                  - sensor.green_bin_collection
+                variables:
+                  DAYS: >-
+                    states['sensor.green_bin_collection'].attributes['Days'] ==
+                    0 ? 'Today' :
+                    states['sensor.green_bin_collection'].attributes['Days'] ==
+                    1
+                      ? 'Tomorrow'
+                      : states['sensor.green_bin_collection'].attributes['Days'] + ' days'
+                card:
+                  type: picture-entity
+                  entity: sensor.green_bin_collection
+                  name: ${DAYS}
+                  show_name: true
+                  show_state: false
+                  image: /local/greentop.png
+              - type: custom:config-template-card
+                entities:
+                  - sensor.brown_bin_collection
+                variables:
+                  DAYS: >-
+                    states['sensor.brown_bin_collection'].attributes['Days'] ==
+                    0 ? 'Today' :
+                    states['sensor.brown_bin_collection'].attributes['Days'] ==
+                    1
+                      ? 'Tomorrow'
+                      : states['sensor.brown_bin_collection'].attributes['Days'] + ' days'
+                card:
+                  type: picture-entity
+                  entity: sensor.brown_bin_collection
+                  name: ${DAYS}
+                  show_name: true
+                  show_state: false
+                  image: /local/browntop.png
+      - type: horizontal-stack
+        cards:
+          - graph: line
+            type: sensor
+            entity: sensor.power_production_now_2
+            detail: 1
+            name: Now
+          - type: custom:vertical-stack-in-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - graph: line
+                    type: sensor
+                    entity: sensor.energy_production_tomorrow_2
+                    detail: 1
+                    name: Tomorrow
+              - graph: line
+                type: sensor
+                entity: sensor.energy_production_today_2
+                detail: 1
+                name: Today
+        title: Solar Forecast
+      - type: custom:stack-in-card
+        title: Smoke Detector
+        mode: vertical
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: entity
+                name: Bedroom
+                entity: binary_sensor.lumi_lumi_sensor_smoke_e40b2d05_ias_zone
+              - type: entity
+                name: Kitchen
+                entity: binary_sensor.kitchen_smoke_detector_smoke
+      - type: vertical-stack
+        cards:
+          - type: custom:fr24-card
+            entity: sensor.fr24_aircraft
+            title: Flightradar24
+            popup: true
+          - type: vertical-stack
+            cards:
+              - type: conditional
+                conditions:
+                  - condition: numeric_state
+                    entity: sensor.flightradar24_current_in_area
+                    above: 0
+                card:
+                  type: markdown
+                  content: >-
+                    {% set data =
+                    state_attr('sensor.flightradar24_current_in_area',
+                    'flights') %} {% for flight in data %}
+                      <ha-icon icon="mdi:airplane"></ha-icon>{{ flight.flight_number }}({{ flight.aircraft_registration }}) - {{ flight.airline_short }} - {{ flight.aircraft_model }}
+                      {{ flight.airport_origin_city }}{%if flight.airport_origin_city %}<img src="https://flagsapi.com/{{ flight.airport_origin_country_code }}/shiny/16.png" title='{{ flight.airport_origin_country_name }}'/>{% endif %} -> {{ flight.airport_destination_city }}{%
+                      if flight.airport_destination_country_code %}<img src="https://flagsapi.com/{{ flight.airport_destination_country_code }}/shiny/16.png" title='{{ flight.airport_destination_country_name }}'/>{% endif %}
+                      {%if flight.time_scheduled_departure %}Departure - {{ flight.time_scheduled_departure | timestamp_custom('%H:%M') }}; {% endif %}{%if flight.time_scheduled_arrival%}Arrival - {{ flight.time_scheduled_arrival | timestamp_custom('%H:%M') }}{% endif %}
+                      Altitude - {{ flight.altitude }} ft{%if flight.altitude > 0 %} ({{(flight.altitude * 0.3048)| round(0)}} m){% endif%}; Gr. speed - {{ flight.ground_speed }} kts{%if flight.ground_speed > 0 %} ({{(flight.ground_speed * 1.852)| round(0)}} km/h){% endif%}
+                      {% endfor %}
+              - type: iframe
+                url: >-
+                  https://www.flightradar24.com/simple?lat=0&lon=0&z=10&label1=reg&size=small
+                aspect_ratio: 100%
+      - type: custom:stack-in-card
+        title: Lights
+        mode: vertical
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: button
+                name: Bedside Lamp
+                entity: light.bedside_lamp
+              - type: button
+                name: Living Room
+                entity: light.living_room_lights_switch
+          - type: horizontal-stack
+            cards:
+              - type: button
+                name: Bedroom
+                entity: light.lumi_lumi_ctrl_neutral1_c41a5e04_on_off
+              - type: button
+                name: Computer Room
+                entity: light.computer_room_lights
+          - type: horizontal-stack
+            cards:
+              - type: button
+                name: Entrance Lights
+                entity: light.entrance_lights
+              - type: button
+                name: Landing Light
+                entity: light.landing_light
+          - type: horizontal-stack
+            cards:
+              - type: button
+                name: Stairs Lights
+                entity: light.stairs_lights
+              - type: button
+                name: Guest Room Light
+                entity: light.landing_light
+      - type: vertical-stack
+        cards:
+          - vehicle_image_type: upload
+            status_image_type: none
+            layout_type: single
+            formatted_entities: false
+            show_location: true
+            show_mileage: true
+            show_car_state: true
+            show_info_icons: true
+            help_highlight: true
+            sections_order:
+              - title
+              - image
+              - info
+              - info_row_j3kzulp
+            bars: []
+            icon_rows: []
+            title: Nissan Leaf
+            image_url: /local/example-vehicle.png
+            charging_image_url: ''
+            image_url_type: image
+            charging_image_url_type: entity
+            vehicle_type: EV
+            unit_type: mi
+            level_entity: ''
+            range_entity: ''
+            charging_status_entity: binary_sensor.ohme_home_pro_car_connected
+            location_entity: ''
+            mileage_entity: ''
+            show_level: true
+            show_range: true
+            show_charge_limit: true
+            icon_grid_entities: []
+            custom_icons: {}
+            icon_interactions: {}
+            icon_styles: {}
+            icon_labels: {}
+            hybrid_display_order: fuel_first
+            car_state_entity: binary_sensor.ohme_home_pro_car_connected
+            charge_limit_entity: ''
+            icon_size: 24
+            icon_gap: 12
+            showEntityInformation: true
+            carStateTextColor: ''
+            rangeTextColor: ''
+            percentageTextColor: ''
+            icon_sizes: {}
+            engine_on_entity: ''
+            row_separator_color: Default
+            row_separator_height: 1
+            row_separators: {}
+            iconActiveColor: '#2980b9'
+            iconInactiveColor: '#cecece'
+            useFormattedEntities: false
+            mainImageHeight: 250px
+            chargingImageHeight: 140px
+            showTitle: true
+            layoutType: single
+            useBarGradient: false
+            barGradientStops:
+              - percentage: 0
+                color: '#ff0000'
+              - percentage: 100
+                color: '#00ff00'
+            cardTitleColor: ''
+            cardBackgroundColor: ''
+            barBackgroundColor: ''
+            barBorderColor: ''
+            barFillColor: ''
+            limitIndicatorColor: ''
+            infoTextColor: ''
+            show_engine_animation: false
+            show_charging_animation: false
+            show_charging_status: true
+            show_engine_on: true
+            engine_on_image_url_type: none
+            type: custom:ultra-vehicle-card
+            battery_level_entity: sensor.ohme_home_pro_battery_soc
+            battery_range_entity: ''
+            fuel_level_entity: ''
+            fuel_range_entity: ''
+            show_battery: true
+            show_battery_range: true
+            show_fuel: true
+            show_fuel_range: true
+            show_charging: true
+            charging_image_entity: binary_sensor.ohme_home_pro_car_charging
+            image_entity: ''
+            vehicle_image_width: 100
+            action_image_width: 100
+            vehicle_image: /local/example-vehicle.png
+            info_rows:
+              - id: j3kzulp
+                info_entities:
+                  - id: dlu7ifi
+                    entity: binary_sensor.ohme_home_pro_car_connected
+                    name: ''
+                    show_icon: false
+                    icon: mdi:car-info
+                    text_color: ''
+                    show_name: false
+                alignment: left
+                spacing: medium
+            images:
+              - id: h1jlati
+                name: Vehicle Image
+                image_type: upload
+                image: /local/example-vehicle.png
+                image_width: 100
+                priority: 0
+            image_priority_mode: order
+          - type: custom:charger-card
+            brand: other
+            entity: binary_sensor.ohme_home_pro_charger_online
+            customImage: /local/ohme1.png
+            customCardTheme: theme_custom
+            chargerImage: White
+            show_leds: true
+            show_collapsibles: false
+            details:
+              name:
+                entity_id: binary_sensor.ohme_home_pro_car_connected
+                attribute: name
+              location:
+                entity_id: binary_sensor.ohme_home_pro_car_charging
+                attribute: site_name
+              status:
+                entity_id: binary_sensor.ohme_home_pro_car_charging
+              statetext:
+                'off': Idle
+                'on': Charging
+              info_left:
+                - entity_id: sensor.ohme_home_pro_power_draw
+                  text: power
+                  unit_show: true
+              info_right:
+                - entity_id: sensor.ohme_home_pro_voltage
+                  text: voltage
+                  unit_show: true
+              stats:
+                default:
+                  - entity_id: calculated
+                    calc_function: sum
+                    calc_entities:
+                      - entity_id: sensor.32a_car_charging_session_step_1
+                      - entity_id: sensor.32a_car_charging_session_step_2
+                    text: This Session
+                    unit_show: true
+                    unit: kWh
+                    round: 1
+                  - entity_id: calculated
+                    calc_function: sum
+                    calc_entities:
+                      - entity_id: input_number.32a_car_charger_last_session_step_1
+                      - entity_id: input_number.32a_car_charger_last_session_step_2
+                    text: Last Session
+                    unit_show: true
+                    unit: kWh
+                    round: 1
+                  - entity_id: calculated
+                    calc_function: sum
+                    calc_entities:
+                      - entity_id: sensor.32a_car_charger_monthly_energy_step_1
+                      - entity_id: sensor.32a_car_charger_monthly_energy_step_2
+                    text: This Month
+                    unit_show: true
+                    unit: kWh
+                    round: 1
+            show_toolbar: false
+            show_stats: false
+            show_status: true
+            show_name: false
+            card_mod:
+              class: inline-card
+      - show_name: true
+        show_icon: true
+        type: button
+        entity: lock.front_door
+        icon: mdi:door-closed-lock
+        show_state: true
+        name: 'Main Door Lock '
+      - type: custom:stack-in-card
+        title: Doors
+        mode: vertical
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: entity
+                name: Kitchen
+                entity: binary_sensor.lumi_lumi_sensor_magnet_aq2_on_off
+              - type: entity
+                name: Living Room
+                entity: binary_sensor.lumi_lumi_sensor_magnet_aq2_8a724e04_on_off
+      - type: vertical-stack
+        title: Sensors
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: Living Room
+                entities:
+                  - sensor.switchbot_meter1_temp
+                line_color: blue
+                line_width: 8
+                font_size: 75
+              - type: custom:mini-graph-card
+                name: Living Room
+                entities:
+                  - sensor.switchbot_meter1_humidity
+                line_color: '#e74c3c'
+                line_width: 8
+                font_size: 75
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: Kitchen
+                entities:
+                  - sensor.switchbot_meter_temp
+                line_color: purple
+                line_width: 8
+                font_size: 75
+              - type: custom:mini-graph-card
+                name: Kitchen
+                entities:
+                  - sensor.switchbot_meter_humidity
+                line_color: indigo
+                line_width: 8
+                font_size: 75
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: Bedroom
+                entities:
+                  - sensor.lumi_lumi_weather_bd674c05_temperature
+                line_color: blue
+                line_width: 8
+                font_size: 75
+              - type: custom:mini-graph-card
+                name: Bedroom
+                entities:
+                  - sensor.lumi_lumi_weather_bd674c05_humidity
+                line_color: '#e74c3c'
+                line_width: 8
+                font_size: 75
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: Computer Room
+                entities:
+                  - sensor.lumi_lumi_weather_temperature
+                line_color: purple
+                line_width: 8
+                font_size: 75
+              - type: custom:mini-graph-card
+                name: Computer Room
+                entities:
+                  - sensor.lumi_lumi_weather_humidity
+                line_color: indigo
+                line_width: 8
+                font_size: 75
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: Bathroom
+                entities:
+                  - sensor.lumi_lumi_weather_temperature_3
+                line_color: blue
+                line_width: 8
+                font_size: 75
+              - type: custom:mini-graph-card
+                name: Bathroom
+                entities:
+                  - sensor.lumi_lumi_weather_humidity_3
+                line_color: '#e74c3c'
+                line_width: 8
+                font_size: 75
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: Toilet
+                entities:
+                  - sensor.outside_toilet_temp_humidity_sensor_temperature_2
+                line_color: purple
+                line_width: 8
+                font_size: 75
+              - type: custom:mini-graph-card
+                name: Toilet
+                entities:
+                  - sensor.outside_toilet_temp_humidity_sensor_humidity_2
+                line_color: indigo
+                line_width: 8
+                font_size: 75
+      - type: glance
+        entities:
+          - entity: sensor.fire_tablet_battery
+          - entity: binary_sensor.fire_tablet_plugged_in
+      - type: vertical-stack
+        cards:
+          - type: vertical-stack
+            cards:
+              - square: false
+                columns: 2
+                type: grid
+                cards:
+                  - type: custom:restriction-card
+                    duration: 10
+                    restrictions:
+                      confirm:
+                        text: Unlock controls
+                    card:
+                      type: custom:shutter-card
+                      title: null
+                      entities:
+                        - entity: cover.living_room_blind_window_covering
+                          name: Living Room Blind
+                          buttons_position: left
+                          title_position: bottom
+                          invert_percentage: false
+                  - type: custom:restriction-card
+                    duration: 10
+                    restrictions:
+                      confirm:
+                        text: Unlock controls
+                    card:
+                      type: custom:shutter-card
+                      title: null
+                      entities:
+                        - entity: cover.bedroom_blind_window_covering
+                          name: Bedroom Blind
+                          buttons_position: left
+                          title_position: bottom
+                          invert_percentage: false
+          - type: vertical-stack
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - show_name: false
+                    show_icon: true
+                    type: button
+                    tap_action:
+                      action: toggle
+                    entity: automation.living_room_blind_close_preset_position
+                    icon: mdi:blinds
+                  - show_name: false
+                    show_icon: true
+                    type: button
+                    tap_action:
+                      action: toggle
+                    entity: automation.living_room_blind_open_preset_position
+                    icon: mdi:blinds-open
+              - type: horizontal-stack
+                cards:
+                  - type: entities
+                    show_header_toggle: false
+                    state_color: true
+                    entities:
+                      - type: custom:cover-position-preset-row
+                        name: Living Room Blind
+                        entity: cover.living_room_blind_window_covering
+                        reverseButtons: false
+                        customTheme: true
+                        isOpenColor: yellow
+                        isMidOpenColor: orange
+                        isMidClosedColor: grey
+                        isClosedColor: black
+                        buttonInactiveColor: white
+                        customSetpoints: true
+                        openPosition: 85
+                        midOpenPosition: 55
+                        midClosePosition: 40
+                        closePosition: 25
+                        customText: false
+  - type: custom:masonry-layout
+    path: ''
+    icon: mdi:server-network
+    theme: montserrat
+    cards:
+      - type: custom:hui-entities-card
+        title: HomeLab 1 - INTERNAL_HOST
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/Proxmox.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.homelab_1_current_consumption
+                    name: Power Consumed
+                    icon: mdi:power-plug
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.homelab_1_cpu_usage
+                name: CPU Usage
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+              - type: custom:bar-card
+                title_position: inside
+                name: 'OS Disk usage: 100 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.homelab_1_disk_used
+              - type: custom:bar-card
+                title_position: inside
+                name: 'Storage1 usage: 500 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.homelab_1_mnt_pve_storage1_disk_used
+              - type: custom:bar-card
+                title_position: inside
+                name: 'Storage2 usage: 1 TB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.homelab_1_mnt_pve_storage2_disk_used
+              - type: custom:bar-card
+                title_position: inside
+                name: 'Storage3 usage: 2 TB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.homelab_1_mnt_pve_storage3_disk_used
+              - type: custom:bar-card
+                title_position: inside
+                name: RAM Usage
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: '%'
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.homelab_1_memory_usage
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.homelab_1_gigabyte_wmi_6_temperature
+                name: CPU Temp
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+              - entities:
+                  - entity: sensor.homelab_1_uptime
+                    name: Uptime
+                    icon: mdi:clock
+                  - entity: binary_sensor.node_homelab_updates_packages
+                    name: Updates
+                    icon: mdi:upload-circle
+                show_header_toggle: false
+                type: entities
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+      - type: custom:hui-entities-card
+        title: HomeLab 3 - INTERNAL_HOST
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/esxi.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.esxi_current_consumption
+                    name: Power Consumed
+                    icon: mdi:power-plug
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.esxi_cpuusage_ghz
+                name: CPU Usage
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+              - type: custom:bar-card
+                title_position: inside
+                name: 'OS Disk usage: 120 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.esxi_datastore_datastore1
+              - type: custom:bar-card
+                title_position: inside
+                name: 'VM usage: 256 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 250
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.esxi_datastore_storage1
+              - type: custom:bar-card
+                title_position: inside
+                name: RAM Usage 8 GB
+                show_icon: true
+                align: split
+                columns: 1
+                max: 8
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.esxi_memusage_gb
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.homelab_1_gigabyte_wmi_6_temperature
+                name: CPU Temp
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+              - entities:
+                  - entity: sensor.esxi_uptime_hours
+                    name: Uptime in Hrs
+                    icon: mdi:clock-time-eight-outline
+                  - entity: sensor.esxi_version
+                    name: ESXi Version
+                    icon: si:vmware
+                show_header_toggle: false
+                type: entities
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+      - type: custom:hui-entities-card
+        title: HomeLab 2 - INTERNAL_HOST
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/Proxmox.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.homelab_2_current_consumption
+                    name: Power Consumed
+                    icon: mdi:power-plug
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.homelab_2_cpu_usage
+                name: CPU Usage
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+              - type: custom:bar-card
+                title_position: inside
+                name: 'OS Disk Usage: 256 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.homelab_2_disk_used
+              - type: custom:bar-card
+                title_position: inside
+                name: 'Samba Usage: 2.5 TB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.truenas_datasets_storage_samba
+              - type: custom:bar-card
+                title_position: inside
+                name: RAM Usage
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: '%'
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.homelab_2_memory_usage
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.homelab_2_composite_temperature
+                name: CPU Temp
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+      - type: custom:hui-entities-card
+        title: 'OMV - INTERNAL_HOST '
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/omv.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.tp_link_tapo_plug_current_power
+                    name: Power Consumed
+                    icon: mdi:power-plug
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.omv_cpu_usage
+                name: CPU Usage
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.192_168_0_20_etc_hostname_used
+              - type: custom:bar-card
+                title_position: inside
+                name: 'RAM usage: 4 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: '%'
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.omv_memory_usage
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.homelab_1_gigabyte_wmi_6_temperature
+                name: Temperature
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+      - type: custom:hui-entities-card
+        title: pfSense - INTERNAL_HOST
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/pfsense.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.pfsense_current_consumption
+                    name: Power Consumed
+                    icon: mdi:power-plug
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.pfsense_cpu_usage
+                name: CPU Usage
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+              - type: custom:bar-card
+                title_position: Inside
+                name: 'Disk Usage: 32 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.pfsense_filesystem_used_percentage_slash
+              - type: custom:bar-card
+                title_position: inside
+                name: 'RAM Usage: 8 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: null
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.pfsense_memory_used_percentage
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.pfsense_system_temperature
+                name: Temperature
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+              - entities:
+                  - entity: sensor.pfsense_system_boottime
+                    name: Last Reboot
+                    icon: mdi:clock-outline
+                show_header_toggle: false
+                type: entities
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            name: Download
+            entities:
+              - sensor.speedtest_download
+            line_color: blue
+            line_width: 8
+            font_size: 75
+          - type: custom:mini-graph-card
+            name: Upload
+            entities:
+              - sensor.speedtest_upload
+            line_color: '#e74c3c'
+            line_width: 8
+            font_size: 75
+          - type: custom:mini-graph-card
+            name: Ping
+            entities:
+              - sensor.speedtest_ping
+            line_color: var(--accent-color)
+            line_width: 8
+            font_size: 75
+      - type: custom:hui-entities-card
+        title: 'TrueNAS - INTERNAL_HOST '
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/truenas.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.uptime_2
+                    name: Uptime
+                    icon: mdi:clock
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.cpu_usage
+                name: CPU Usage
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+              - type: custom:bar-card
+                title_position: inside
+                name: 'Disk usage: 2 TB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.truenas_datasets_storage_samba
+              - type: vertical-stack
+                cards:
+                  - type: custom:bar-card
+                    title_position: inside
+                    show_icon: true
+                    align: split
+                    columns: 1
+                    max: 100
+                    unit_of_measurement: '%'
+                    severity:
+                      - value: 50
+                        color: '#3498db'
+                      - value: 75
+                        color: '#f39c12'
+                      - value: 100
+                        color: '#e45e65'
+                    style: |
+                      ha-card { 
+                        --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                        --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                        --ha-card-box-shadow: 'none';
+                      }
+                    entity: sensor.memory_usage
+                    name: RAM usage
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.homelab_2_composite_temperature
+                name: Temperature
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+              - entities:
+                  - entity: sensor.google_drive_backup
+                    name: Google Drive Backup
+                  - entity: sensor.storage_samba_2
+                    name: Snapshots
+                  - entity: update.update
+                    name: Version
+                show_header_toggle: false
+                type: entities
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+      - type: custom:hui-entities-card
+        title: Home Assistant - INTERNAL_HOST
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/HA.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.home_assistant_current_consumption
+                    name: Power Consumed
+                    icon: mdi:power-plug
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.processor_use
+                name: CPU Usage
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+              - type: custom:bar-card
+                title_position: Inside
+                name: 'Disk Usage: 256 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: GB
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.disk_use
+              - type: custom:bar-card
+                title_position: inside
+                name: 'RAM Usage: 8 GB'
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: null
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.memory_use_percent
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.cpu_temperature
+                name: Temperature
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+              - entities:
+                  - entity: update.home_assistant_core_update
+                    name: HA Core Version
+                  - entity: sensor.last_boot
+                    name: Last Reboot
+                    icon: mdi:clock-outline
+                  - entity: sensor.homeassistant_uptime
+                    name: HA Uptime
+                    icon: mdi:clock-outline
+                show_header_toggle: false
+                type: entities
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+      - type: custom:stack-in-card
+        title: Uptime
+        mode: vertical
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:uptime-card
+                entity: binary_sensor.uptimekuma_home_assistant
+                icon: si:homeassistant
+                title_template: Home Assistant
+              - type: custom:uptime-card
+                entity: binary_sensor.uptimekuma_truenas
+                icon: si:truenas
+                title_template: TrueNAS
+              - type: custom:uptime-card
+                entity: binary_sensor.uptimekuma_homelab_2
+                icon: si:proxmox
+                title_template: Proxmox
+              - type: custom:uptime-card
+                entity: binary_sensor.uptimekuma_pihole
+                icon: mdi:pi-hole
+                title_template: Pi-hole
+      - type: horizontal-stack
+        title: Ad-Blockers
+        cards:
+          - type: custom:apexcharts-card
+            apex_config:
+              chart:
+                height: 355px
+            header:
+              show: true
+              title: Pi-hole
+              show_states: true
+              colorize_states: true
+            chart_type: radialBar
+            series:
+              - entity: sensor.pi_hole_ads_blocked_today
+                name: Ads Blocked Today
+                show:
+                  in_chart: false
+              - entity: sensor.pi_hole_ads_percentage_blocked_today
+                name: Ads Percent Blocked
+                show:
+                  in_header: false
+              - entity: sensor.pi_hole_domains_blocked
+                name: Domains Blocked
+                show:
+                  in_chart: false
+              - entity: sensor.pi_hole_seen_clients
+                name: Clients Seen
+                show:
+                  in_chart: false
+          - type: custom:apexcharts-card
+            apex_config:
+              chart:
+                height: 355px
+            header:
+              show: true
+              title: AdGuard
+              show_states: true
+              colorize_states: true
+            chart_type: radialBar
+            series:
+              - entity: sensor.adguard_dns_queries
+                name: DNS Queries
+                show:
+                  in_chart: false
+              - entity: sensor.adguard_dns_queries_blocked_ratio
+                name: DNS Queries Blocked
+                show:
+                  in_header: false
+              - entity: sensor.adguard_dns_queries_blocked
+                name: DNS Queries Blocked
+                show:
+                  in_chart: false
+              - entity: sensor.adguard_parental_control_blocked
+                name: Parental Control Blocked
+                show:
+                  in_chart: false
+      - layout: auto
+        height: 200
+        unit_prefix: ''
+        round: 0
+        convert_units_to: ''
+        co2_intensity_entity: sensor.co2_signal_co2_intensity
+        gas_co2_intensity: 2351.6459999999997
+        min_box_size: 3
+        min_box_distance: 5
+        show_states: true
+        show_units: true
+        sections:
+          - entities:
+              - type: entity
+                children:
+                  - sensor.server_rack_current_consumption
+                entity_id: sensor.foxess_load_power
+                name: Total Consumption
+                color_on_state: true
+          - entities:
+              - type: entity
+                children: []
+                entity_id: sensor.server_rack_current_consumption
+                name: Server Rack
+        type: custom:sankey-chart
+        show_names: true
+        min_state: 0
+        show_icons: true
+        title: Server Rack Consumption
+      - type: custom:hui-entities-card
+        title: APC UPS
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/apc.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.apc_ups_battery_charge
+                    name: SOC
+                    icon: mdi:battery
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.apc_ups_load
+                name: Load
+                height: 50
+                line_width: 2
+                font_size: 80
+                hours_to_show: 4
+                points_per_hour: 90
+                show:
+                  icon: false
+                  extrema: true
+                color_thresholds:
+                  - value: 28
+                    color: '#e74c3c'
+                  - value: 15
+                    color: '#1db954'
+                  - value: 0
+                    color: '#3498db'
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+              - type: custom:mini-graph-card
+                height: 20
+                line_width: 2
+                font_size: 70
+                hours_to_show: 168
+                points_per_hour: 1
+                show:
+                  extrema: true
+                  fill: true
+                style: |
+                  ha-card { 
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                    border-radius: 5px;
+                  }
+                entities:
+                  - sensor.apc_ups_battery_runtime
+                name: Battery Runtime
+                icon: mdi:battery
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+              - entities:
+                  - entity: sensor.apc_ups_status
+                    name: Battery Status
+                    icon: mdi:battery-80
+                  - entity: sensor.apc_ups_battery_voltage
+                    name: Battery Voltage
+                    icon: mdi:battery-90
+                show_header_toggle: false
+                type: entities
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+      - type: custom:hui-entities-card
+        title: Canon Printer
+        show_header_toggle: 'off'
+        style: |
+          ha-card { border-radius: 20px; }
+        entities:
+          - type: custom:hui-vertical-stack-card
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: picture
+                    style: |
+                      ha-card { 
+                          --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                          --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                          --ha-card-box-shadow: 'none';
+                      }
+                    image: /local/canon.png
+                  - type: custom:button-card
+                    layout: icon_name_state2nd
+                    show_icon: true
+                    show_state: true
+                    styles:
+                      grid:
+                        - grid-template-columns: 50px auto
+                      icon:
+                        - padding: 20px 10px
+                        - height: 30px
+                        - width: 30px
+                      card:
+                        - --ha-card-background: rgba(0, 0, 0, 0.0)
+                        - --ha-card-box-shadow: none
+                      state:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - font-family: Roboto, sans-serif
+                        - font-size: 15px
+                      name:
+                        - padding: 0px 10px
+                        - justify-self: start
+                        - color: var(--secondary-text-color)
+                    entity: sensor.canon_mg4200_series
+                    name: State
+                    icon: mdi:clock-outline
+              - type: custom:bar-card
+                title_position: inside
+                name: Colour
+                show_icon: true
+                align: split
+                columns: 1
+                max: 100
+                unit_of_measurement: null
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.canon_mg4200_series_color
+              - type: custom:bar-card
+                title_position: inside
+                name: Black
+                show_icon: true
+                align: split
+                columns: 1
+                max: 250
+                unit_of_measurement: null
+                severity:
+                  - value: 50
+                    color: '#3498db'
+                  - value: 75
+                    color: '#f39c12'
+                  - value: 100
+                    color: '#e45e65'
+                style: |
+                  ha-card { 
+                    --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                    --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                    --ha-card-box-shadow: 'none';
+                  }
+                entity: sensor.canon_mg4200_series_black
+                color_thresholds:
+                  - value: 90
+                    color: '#3498db'
+                  - value: 120
+                    color: '#f39c12'
+                  - value: 150
+                    color: '#E45E65'
+              - entities:
+                  - entity: sensor.canon_mg4200_series_uptime
+                    name: Uptime
+                    icon: mdi:clock-time-eight-outline
+                show_header_toggle: false
+                type: entities
+                style: |
+                  ha-card { 
+                      --paper-card-background-color: 'rgba(0, 0, 0, 0.0)';
+                      --ha-card-background: "rgba(0, 0, 0, 0.0)";
+                      --ha-card-box-shadow: 'none';
+                  }
+  - type: custom:masonry-layout
+    path: ''
+    icon: mdi:camera-control
+    theme: montserrat
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: gauge
+            entity: >-
+              sensor.octopus_energy_electricity_example_meter_current_demand
+            name: Live Grid Consumption
+            min: -8000
+            max: 20000
+            needle: true
+            severity:
+              green: 8
+              yellow: 0
+              red: 0
+          - type: custom:apexcharts-card
+            apex_config:
+              chart:
+                stacked: false
+            graph_span: 14d
+            span:
+              end: day
+            show:
+              last_updated: true
+            header:
+              show: true
+              show_states: true
+              colorize_states: true
+              title: Previous day energy consumption
+            series:
+              - entity: >-
+                  sensor.octopus_energy_gas_example_meter_previous_accumulative_cost
+                name: Gas
+                type: column
+                unit: ' £'
+                color: slateblue
+                group_by:
+                  func: max
+                  duration: 1d
+              - entity: >-
+                  sensor.octopus_energy_electricity_example_meter_previous_accumulative_cost
+                name: Electricity
+                type: column
+                unit: ' £'
+                color: orangered
+                group_by:
+                  func: max
+                  duration: 1d
+              - entity: sensor.total_energy_used_today
+                name: Total Energy
+                type: column
+                unit: ' £'
+                color: blue
+                group_by:
+                  func: max
+                  duration: 1d
+          - type: custom:apexcharts-card
+            apex_config:
+              chart:
+                stacked: false
+            graph_span: 14d
+            span:
+              end: day
+            show:
+              last_updated: true
+            header:
+              show: true
+              show_states: true
+              colorize_states: true
+              title: Daily energy consumption
+            series:
+              - entity: >-
+                  sensor.octopus_energy_gas_example_meter_current_accumulative_cost
+                name: Gas
+                type: column
+                unit: ' £'
+                color: slateblue
+                group_by:
+                  func: max
+                  duration: 1d
+              - entity: >-
+                  sensor.octopus_energy_electricity_example_meter_current_accumulative_cost
+                name: Electricity
+                type: column
+                unit: ' £'
+                color: orangered
+                group_by:
+                  func: max
+                  duration: 1d
+              - entity: >-
+                  sensor.octopus_energy_gas_example_meter_current_accumulative_consumption_kwh
+                name: Gas
+                type: column
+                unit: ' KWh'
+                color: yellow
+                group_by:
+                  func: max
+                  duration: 1d
+              - entity: >-
+                  sensor.octopus_energy_electricity_example_meter_current_accumulative_consumption
+                name: Electricity
+                type: column
+                unit: ' KWh'
+                color: green
+                group_by:
+                  func: max
+                  duration: 1d
+      - type: vertical-stack
+        cards:
+          - type: custom:fr24-card
+            entity: sensor.fr24_aircraft
+            title: Flightradar24
+            popup: true
+          - type: vertical-stack
+            cards:
+              - type: conditional
+                conditions:
+                  - condition: numeric_state
+                    entity: sensor.flightradar24_current_in_area
+                    above: 0
+                card:
+                  type: markdown
+                  content: >-
+                    {% set data =
+                    state_attr('sensor.flightradar24_current_in_area',
+                    'flights') %} {% for flight in data %}
+                      <ha-icon icon="mdi:airplane"></ha-icon>{{ flight.flight_number }}({{ flight.aircraft_registration }}) - {{ flight.airline_short }} - {{ flight.aircraft_model }}
+                      {{ flight.airport_origin_city }}{%if flight.airport_origin_city %}<img src="https://flagsapi.com/{{ flight.airport_origin_country_code }}/shiny/16.png" title='{{ flight.airport_origin_country_name }}'/>{% endif %} -> {{ flight.airport_destination_city }}{%
+                      if flight.airport_destination_country_code %}<img src="https://flagsapi.com/{{ flight.airport_destination_country_code }}/shiny/16.png" title='{{ flight.airport_destination_country_name }}'/>{% endif %}
+                      {%if flight.time_scheduled_departure %}Departure - {{ flight.time_scheduled_departure | timestamp_custom('%H:%M') }}; {% endif %}{%if flight.time_scheduled_arrival%}Arrival - {{ flight.time_scheduled_arrival | timestamp_custom('%H:%M') }}{% endif %}
+                      Altitude - {{ flight.altitude }} ft{%if flight.altitude > 0 %} ({{(flight.altitude * 0.3048)| round(0)}} m){% endif%}; Gr. speed - {{ flight.ground_speed }} kts{%if flight.ground_speed > 0 %} ({{(flight.ground_speed * 1.852)| round(0)}} km/h){% endif%}
+                      {% endfor %}
+              - type: iframe
+                url: >-
+                  https://www.flightradar24.com/simple?lat=0&lon=0&z=10&label1=reg&size=small
+                aspect_ratio: 100%
+      - type: custom:mail-and-packages-card
+        name: Parcels
+        updated: sensor.mail_updated
+        details: true
+        image: true
+        packages_delivered: sensor.mail_amazon_packages_delivered
+        packages_in_transit: sensor.mail_packages_in_transit
+        amazon_packages: sensor.mail_amazon_packages
+        camera_entity: camera.mail_amazon_delivery_camera
+        royal_mail_packages: sensor.mail_evri_packages
+        evri_packages: sensor.mail_evri_packages
+      - type: vertical-stack
+        cards:
+          - type: custom:mini-media-player
+            entity: media_player.samsung_6_series_65
+            toggle_power: true
+            volume_stateless: false
+            group: false
+            artwork: cover
+            source: full
+            sound_mode: full
+            info: scroll
+          - type: custom:mini-media-player
+            entity: media_player.bedroom_tv_2
+            volume_stateless: false
+            toggle_power: true
+            artwork: full-cover
+            source: full
+            sound_mode: full
+          - type: custom:mini-media-player
+            entity: media_player.example_fire_tv
+            artwork: full-cover
+            source: full
+            sound_mode: full
+      - type: custom:mini-media-player
+        entity: media_player.youtube_media_player
+        volume_stateless: true
+        group: true
+      - type: vertical-stack
+        cards:
+          - type: custom:restriction-card
+            duration: 10
+            restrictions:
+              confirm:
+                text: Unlock controls
+            card:
+              show_name: true
+              show_icon: true
+              type: button
+              tap_action:
+                action: toggle
+              entity: switch.optoma_projector_mss110_main_channel
+              name: 'Optoma Projector '
+              show_state: true
+              icon: mdi:projector
+          - type: media-control
+            entity: media_player.example_fire_tv
+      - entity: sensor.example_bus_departures
+        image_style: fanart
+        max: 3
+        title: Bus to Work
+        type: custom:upcoming-media-card
+        clock: 24
+        box_shadows: false
+        border_color: none
+        title_size: small
+        line1_size: little
+        card_mod:
+          style: |
+            .type-custom-upcoming-media-card {
+              background: none !important;
+              box-shadow: none !important;
+            }
+
+            .type-custom-upcoming-media-card > div {
+              padding: 0px !important;
+            }
+
+            .lond_fanart {
+              border-radius: var(--ha-card-border-radius, 4px);
+              background-color: rgb(151, 154, 154);
+              background-blend-mode: multiply;
+              height: 70px;
+            }
+
+            .lond_fan_fanart {
+              background: none !important;
+              box-shadow: none !important;
+            }
